@@ -1,6 +1,6 @@
 ## Introduction
 * [README](README.md)
-* [Installation](INSTALLATION.md)
+* [Config](CONFIG.md)
 
 ## Features
 * [Items](features/ITEMS.md)

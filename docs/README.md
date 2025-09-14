@@ -9,7 +9,7 @@ OpenRPG is a self-hosted npm package, open-source backend for RPGs, developed in
 - **Configurable CORS** – Controls which clients can access the API securely
 
 ## Core Server
-The server contains a simple configuration based on `server.conf`:
+The server contains a simple configuration based on `.env`:
 - HOST: IP address where the server will run
 - PORT: PORT the server will use to listen for requests
 ```
