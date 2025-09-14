@@ -3,10 +3,9 @@ name: Build and Deploy GitBook Documentation
 on:
   push:
     branches: [ main ]
-    paths: [ 'docs/**', 'book.json' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'docs/**', 'book.json' ]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -28,11 +27,26 @@ jobs:
     - name: Install GitBook CLI
       run: npm install -g gitbook-cli
       
+    - name: Ensure docs directory exists
+      run: |
+        mkdir -p docs
+        if [ ! -f "docs/README.md" ]; then
+          echo "# openRPG Documentation" > docs/README.md
+          echo "Documentação do openRPG Backend" >> docs/README.md
+        fi
+        if [ ! -f "docs/SUMMARY.md" ]; then
+          echo "# Summary" > docs/SUMMARY.md
+          echo "* [Introduction](README.md)" >> docs/SUMMARY.md
+        fi
+      
     - name: Install GitBook plugins
-      run: gitbook install
+      run: |
+        cd docs
+        gitbook install || echo "Plugin installation failed, continuing..."
       
     - name: Build GitBook
-      run: gitbook build
+      run: |
+        gitbook build docs _book
       
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'

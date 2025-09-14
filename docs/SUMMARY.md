@@ -52,3 +52,4 @@
 * [FAQ](appendices/faq.md)
 * [Troubleshooting](appendices/troubleshooting.md)
 * [Licença](appendices/license.md)
+
