@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import itemRoutes from './routes/itemRoutes';
+import accountRoutes from './routes/accountRoutes';
 
 // Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
@@ -29,6 +30,10 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Middleware para parsing de JSON
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
 // Middleware de logging básico
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
@@ -39,9 +44,10 @@ app.use((req, res, next) => {
  * Configuração de rotas
  * 
  * @description Define as rotas principais da API. Cada módulo de funcionalidade
- * (items, characters, etc.) deve ter suas rotas organizadas em arquivos separados.
+ * (items, characters, accounts, etc.) deve ter suas rotas organizadas em arquivos separados.
  */
 app.use('/api/items', itemRoutes);
+app.use('/api/accounts', accountRoutes);
 
 // Rota de health check
 app.get('/health', (req, res) => {
@@ -61,7 +67,8 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       health: '/health',
-      items: '/api/items'
+      items: '/api/items',
+      accounts: '/api/accounts'
     },
     documentation: 'https://docs.openrpg.com'
   });
@@ -78,7 +85,7 @@ app.use('*', (req, res) => {
     success: false,
     error: 'Rota não encontrada',
     message: `A rota ${req.method} ${req.originalUrl} não existe`,
-    availableRoutes: ['/', '/health', '/api/items']
+    availableRoutes: ['/', '/health', '/api/items', '/api/accounts']
   });
 });
 
@@ -113,6 +120,7 @@ function startServer(): void {
     console.log(`🌐 URL: http://localhost:${PORT}`);
     console.log(`📚 Health Check: http://localhost:${PORT}/health`);
     console.log(`📦 Items API: http://localhost:${PORT}/api/items`);
+    console.log(`👤 Accounts API: http://localhost:${PORT}/api/accounts`);
     console.log('=================================');
   });
 }
