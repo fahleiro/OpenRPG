@@ -55,6 +55,15 @@ export const getItemById = async (req: Request, res: Response): Promise<void> =>
 
     // Processa o documento encontrado
     const doc = snapshot.docs[0];
+    if (!doc) {
+      console.log(`❌ [GET_ITEM_BY_ID] Documento não encontrado para ID ${id}`);
+      res.status(404).json({
+        success: false,
+        error: 'Item não encontrado',
+        message: `Item com ID ${id} não existe`
+      });
+      return;
+    }
     const data = doc.data();
     
     const item = {
