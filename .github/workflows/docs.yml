@@ -7,6 +7,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -59,7 +64,22 @@ jobs:
       
     - name: Build GitBook
       run: |
+        echo "Building GitBook..."
         gitbook build docs _book
+        echo "Build completed. Checking output..."
+        ls -la _book/ || echo "No _book directory found"
+        
+    - name: Verify build output
+      run: |
+        if [ ! -d "_book" ]; then
+          echo "Error: _book directory not created"
+          exit 1
+        fi
+        if [ ! -f "_book/index.html" ]; then
+          echo "Error: index.html not found in _book"
+          exit 1
+        fi
+        echo "Build verification successful"
       
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
@@ -68,6 +88,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./_book
         publish_branch: gh-pages
+        force_orphan: true
         
     - name: Upload build artifacts
       if: always()
