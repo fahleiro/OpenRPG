@@ -1,6 +1,6 @@
 # openRPG Backend - Documentação
 
-> Documentação atualizada em 14/09/2025 - Deploy corrigido
+> Documentação atualizada em 14/09/2025 - Deploy corrigido v2
 
 Bem-vindo à documentação oficial do **openRPG Backend**!
 

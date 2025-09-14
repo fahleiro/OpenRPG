@@ -18,15 +18,24 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '16'
+        node-version: '12'
         cache: 'npm'
         
     - name: Install dependencies
       run: npm ci
       
-    - name: Install GitBook CLI
+    - name: Fix graceful-fs compatibility
+      run: |
+        npm install -g graceful-fs@4.2.10
+        
+    - name: Install GitBook CLI with compatibility fixes
       run: |
         npm install -g gitbook-cli@2.3.2
+        # Apply graceful-fs patch
+        cd $(npm root -g)/gitbook-cli/node_modules/npm/node_modules/
+        if [ -d "graceful-fs" ]; then
+          npm install graceful-fs@4.2.10 --no-save
+        fi
         gitbook fetch 3.2.3
       
     - name: Ensure docs directory exists
