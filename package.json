@@ -7,7 +7,12 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "docs:install": "npm install -g gitbook-cli",
+    "docs:init": "gitbook init",
+    "docs:serve": "gitbook serve",
+    "docs:build": "gitbook build",
+    "docs:publish": "gitbook build && gh-pages -d _book"
   },
   "keywords": ["rpg", "backend", "api", "typescript", "express"],
   "author": "",
@@ -22,6 +27,7 @@
     "@types/node": "^20.5.0",
     "typescript": "^5.1.6",
     "ts-node-dev": "^2.0.0",
-    "rimraf": "^5.0.1"
+    "rimraf": "^5.0.1",
+    "gh-pages": "^6.0.0"
   }
 }

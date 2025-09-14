@@ -209,6 +209,54 @@ interface Item {
 
 ---
 
+## 📚 Documentação GitBook
+
+O projeto possui documentação completa e interativa hospedada no GitBook:
+
+### 🌐 Acessar Documentação
+- **GitBook Online**: [openRPG Documentation](https://fahleiro.gitbook.io/openrpg) *(será configurado)*
+- **GitHub Pages**: [Documentação Local](https://fahleiro.github.io/openRPG) *(gerada automaticamente)*
+
+### 📖 Conteúdo da Documentação
+- **Início Rápido** - Instalação e primeiros passos
+- **API Reference** - Documentação completa dos endpoints
+- **Configuração** - Como personalizar o servidor
+- **Exemplos Práticos** - Casos de uso e integrações
+- **Estrutura de Dados** - Schemas e interfaces TypeScript
+
+### 🔧 Configurar GitBook Localmente
+
+```bash
+# 1. Instalar GitBook CLI
+npm run docs:install
+
+# 2. Servir documentação localmente
+npm run docs:serve
+# Acesse: http://localhost:4000
+
+# 3. Build da documentação
+npm run docs:build
+
+# 4. Publicar no GitHub Pages
+npm run docs:publish
+```
+
+### 🚀 Deploy Automático
+
+A documentação é automaticamente:
+- **Buildada** a cada push na branch `main`
+- **Publicada** no GitHub Pages via GitHub Actions
+- **Sincronizada** com o GitBook (quando configurado)
+
+### 📝 Contribuir com a Documentação
+
+1. Edite os arquivos markdown na pasta `/docs`
+2. Teste localmente com `npm run docs:serve`
+3. Faça commit das alterações
+4. A documentação será atualizada automaticamente
+
+---
+
 ## 🚀 Roadmap Futuro
 
 - [ ] **CRUD completo de itens** (POST, PUT, DELETE)

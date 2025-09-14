@@ -1,0 +1,56 @@
+{
+  "title": "openRPG Backend Documentation",
+  "description": "Self-hosted, open source backend for RPGs in TypeScript - Complete API Documentation",
+  "author": "fahleiro",
+  "language": "pt-br",
+  "gitbook": ">=3.0.0",
+  "root": "./docs",
+  "structure": {
+    "readme": "README.md",
+    "summary": "SUMMARY.md"
+  },
+  "plugins": [
+    "theme-api",
+    "prism",
+    "anchors",
+    "search",
+    "copy-code-button",
+    "expandable-chapters",
+    "github",
+    "edit-link",
+    "page-toc-button",
+    "back-to-top-button"
+  ],
+  "pluginsConfig": {
+    "theme-api": {
+      "languages": [
+        {
+          "lang": "javascript",
+          "name": "JavaScript",
+          "default": true
+        },
+        {
+          "lang": "typescript",
+          "name": "TypeScript"
+        }
+      ]
+    },
+    "github": {
+      "url": "https://github.com/fahleiro/openRPG"
+    },
+    "edit-link": {
+      "base": "https://github.com/fahleiro/openRPG/edit/main/docs",
+      "label": "Editar esta página"
+    },
+    "prism": {
+      "css": [
+        "prismjs/themes/prism-tomorrow.css"
+      ]
+    }
+  },
+  "variables": {
+    "version": "1.0.0",
+    "baseUrl": "http://localhost:3000",
+    "apiVersion": "v1"
+  }
+}
