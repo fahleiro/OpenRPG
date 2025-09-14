@@ -19,10 +19,12 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '12'
-        cache: 'npm'
         
     - name: Install dependencies
-      run: npm ci
+      run: |
+        # Remove package-lock.json para evitar conflitos de versão
+        rm -f package-lock.json
+        npm install
       
     - name: Fix graceful-fs compatibility
       run: |
