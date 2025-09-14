@@ -29,4 +29,4 @@ Firebase Firestore Database
 #### Items Collection  
 - **Purpose**: Game items catalog
 - **Fields**: id, name, description, typeId, createdAt, updatedAt
-- **Operations**: Create, Read, Update, Delete, List all
+- **Operations**: Read
