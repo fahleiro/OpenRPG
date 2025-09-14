@@ -4,6 +4,7 @@ Este guia detalha todo o processo de instalação do openRPG Backend, incluindo 
 
 ## 📋 Requisitos do Sistema
 
+
 ### Mínimos
 - **Node.js**: 18.0.0 ou superior
 - **npm**: 8.0.0 ou superior (incluído com Node.js)
