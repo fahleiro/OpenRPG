@@ -4,6 +4,7 @@ globs:
 alwaysApply: true
 ---
 # rules
+- always write files in English US;
 - never modify the `docs/` folder directly; it can only be updated manually by the user;
 - always document code blocks in the server source code in order to have documented parts of the code for a clear and concise understanding of what that logic does;
 - always document in /docs so GitBook is updated, always including examples of features and detailed descriptions of features (API endpoint logic), with examples of how to apply them;
