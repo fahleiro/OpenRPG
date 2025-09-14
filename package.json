@@ -12,7 +12,8 @@
     "docs:init": "gitbook init",
     "docs:serve": "gitbook serve",
     "docs:build": "gitbook build",
-    "docs:publish": "gitbook build && gh-pages -d _book"
+    "docs:publish": "gitbook build && gh-pages -d _book",
+    "test:gitbook": "node scripts/test-gitbook-sync.js"
   },
   "keywords": ["rpg", "backend", "api", "typescript", "express"],
   "author": "",
