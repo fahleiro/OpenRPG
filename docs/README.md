@@ -1,3 +1,4 @@
+## About
 OpenRPG is a self-hosted npm package, open-source backend for RPGs, developed in TypeScript and built as a REST API
 
 ## Key Features
