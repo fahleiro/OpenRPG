@@ -1,7 +1,7 @@
 # Sumário
 
 ## Introdução
-* [Visão Geral](README.md)
+* [README](README.md)
 * [Início Rápido](quick-start.md)
 * [Instalação](installation.md)
 
