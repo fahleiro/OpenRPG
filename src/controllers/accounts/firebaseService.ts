@@ -25,6 +25,11 @@ class FirebaseService {
    */
   async saveAccount(username: string, password: string): Promise<string> {
     try {
+      console.log('💾 [FIREBASE_SERVICE] Iniciando salvamento da conta');
+      console.log('💾 [FIREBASE_SERVICE] Username:', username);
+      console.log('💾 [FIREBASE_SERVICE] Password hash:', password.substring(0, 10) + '...');
+      console.log('💾 [FIREBASE_SERVICE] Database instance:', this.db ? 'disponível' : 'indisponível');
+      
       const accountData = {
         username,
         passwrod: password, // Mantendo o nome do campo conforme mostrado no Firebase
@@ -32,13 +37,22 @@ class FirebaseService {
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       };
 
+      console.log('📝 [FIREBASE_SERVICE] Dados da conta preparados:', {
+        username: accountData.username,
+        passwrod: accountData.passwrod.substring(0, 10) + '...',
+        createdAt: 'serverTimestamp',
+        updatedAt: 'serverTimestamp'
+      });
+
       const docRef = await this.db.collection('accounts').add(accountData);
-      console.log(`✅ Conta salva no Firebase com ID: ${docRef.id}`);
+      console.log(`✅ [FIREBASE_SERVICE] Conta salva no Firebase com ID: ${docRef.id}`);
       
       return docRef.id;
     } catch (error) {
-      console.error('❌ Erro ao salvar conta no Firebase:', error);
-      throw new Error('Falha ao salvar conta no Firebase');
+      console.error('💥 [FIREBASE_SERVICE] ERRO ao salvar conta:', error);
+      console.error('💥 [FIREBASE_SERVICE] Stack trace:', error instanceof Error ? error.stack : 'N/A');
+      console.error('💥 [FIREBASE_SERVICE] Tipo do erro:', typeof error);
+      throw new Error(`Falha ao salvar conta no Firebase: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -50,16 +64,29 @@ class FirebaseService {
    */
   async usernameExists(username: string): Promise<boolean> {
     try {
+      console.log('🔍 [FIREBASE_SERVICE] Verificando username:', username);
+      console.log('🔍 [FIREBASE_SERVICE] Database instance:', this.db ? 'disponível' : 'indisponível');
+      
       const snapshot = await this.db
         .collection('accounts')
         .where('username', '==', username)
         .limit(1)
         .get();
       
-      return !snapshot.empty;
+      console.log('📊 [FIREBASE_SERVICE] Snapshot resultado:', {
+        empty: snapshot.empty,
+        size: snapshot.size,
+        docs: snapshot.docs.length
+      });
+      
+      const exists = !snapshot.empty;
+      console.log('✅ [FIREBASE_SERVICE] Username existe:', exists);
+      
+      return exists;
     } catch (error) {
-      console.error('❌ Erro ao verificar username:', error);
-      throw new Error('Falha ao verificar username');
+      console.error('💥 [FIREBASE_SERVICE] ERRO ao verificar username:', error);
+      console.error('💥 [FIREBASE_SERVICE] Stack trace:', error instanceof Error ? error.stack : 'N/A');
+      throw new Error(`Falha ao verificar username: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

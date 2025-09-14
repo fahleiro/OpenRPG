@@ -21,12 +21,16 @@ import crypto from 'crypto';
  */
 export const createAccount = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('🔍 [CREATE_ACCOUNT] Iniciando criação de conta');
+    console.log('📥 [CREATE_ACCOUNT] Body recebido:', JSON.stringify(req.body, null, 2));
+    
     const { username, passwrod } = req.body;
 
     // === VALIDAÇÃO DE DADOS ===
     
     // Validação básica dos campos obrigatórios
     if (!username || !passwrod) {
+      console.log('❌ [CREATE_ACCOUNT] Campos obrigatórios ausentes:', { username: !!username, passwrod: !!passwrod });
       res.status(400).json({
         success: false,
         error: 'Dados incompletos',
@@ -35,10 +39,13 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
       });
       return;
     }
+    
+    console.log('✅ [CREATE_ACCOUNT] Campos obrigatórios validados');
 
     // Validação de username (mínimo 3 caracteres, apenas letras, números e underscore)
     const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
     if (!usernameRegex.test(username)) {
+      console.log('❌ [CREATE_ACCOUNT] Username inválido:', username);
       res.status(400).json({
         success: false,
         error: 'Username inválido',
@@ -46,9 +53,11 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
       });
       return;
     }
+    console.log('✅ [CREATE_ACCOUNT] Username válido:', username);
 
     // Validação de senha (mínimo 6 caracteres)
     if (passwrod.length < 6) {
+      console.log('❌ [CREATE_ACCOUNT] Senha muito curta:', passwrod.length, 'caracteres');
       res.status(400).json({
         success: false,
         error: 'Senha muito curta',
@@ -56,12 +65,14 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
       });
       return;
     }
+    console.log('✅ [CREATE_ACCOUNT] Senha válida:', passwrod.length, 'caracteres');
 
     // === VERIFICAÇÃO DE DUPLICATAS NO FIRESTORE ===
     
-    // Verifica se username já existe no Firebase
+    console.log('🔍 [CREATE_ACCOUNT] Verificando se username já existe...');
     const usernameExists = await firebaseService.usernameExists(username);
     if (usernameExists) {
+      console.log('❌ [CREATE_ACCOUNT] Username já existe:', username);
       res.status(409).json({
         success: false,
         error: 'Username já existe',
@@ -69,20 +80,27 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
       });
       return;
     }
+    console.log('✅ [CREATE_ACCOUNT] Username disponível:', username);
 
     // === PROCESSAMENTO E SALVAMENTO ===
     
-    // Hash da senha antes de salvar no Firebase
+    console.log('🔐 [CREATE_ACCOUNT] Gerando hash da senha...');
+    const salt = process.env.PASSWORD_SALT || 'openrpg_salt';
+    console.log('🧂 [CREATE_ACCOUNT] Salt usado:', salt ? 'definido' : 'padrão');
+    
     const hashedPassword = crypto
       .createHash('sha256')
-      .update(passwrod + (process.env.PASSWORD_SALT || 'openrpg_salt'))
+      .update(passwrod + salt)
       .digest('hex');
+    
+    console.log('✅ [CREATE_ACCOUNT] Hash gerado com sucesso');
 
-    // Salva a conta diretamente no Firebase
+    console.log('💾 [CREATE_ACCOUNT] Salvando conta no Firebase...');
     const accountId = await firebaseService.saveAccount(username, hashedPassword);
+    console.log('✅ [CREATE_ACCOUNT] Conta salva com ID:', accountId);
 
     // Resposta de sucesso
-    res.status(201).json({
+    const responseData = {
       success: true,
       message: 'Conta criada com sucesso!',
       data: {
@@ -90,15 +108,29 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
         username,
         createdAt: new Date().toISOString()
       }
-    });
+    };
+    
+    console.log('📤 [CREATE_ACCOUNT] Enviando resposta de sucesso:', JSON.stringify(responseData, null, 2));
+    res.status(201).json(responseData);
 
   } catch (error) {
-    console.error('Erro no createAccount:', error);
+    console.error('💥 [CREATE_ACCOUNT] ERRO CRÍTICO:', error);
+    console.error('💥 [CREATE_ACCOUNT] Stack trace:', error instanceof Error ? error.stack : 'N/A');
+    console.error('💥 [CREATE_ACCOUNT] Tipo do erro:', typeof error);
+    console.error('💥 [CREATE_ACCOUNT] Mensagem do erro:', error instanceof Error ? error.message : String(error));
     
-    res.status(500).json({
+    const errorResponse = {
       success: false,
       error: 'Erro interno do servidor',
-      message: 'Não foi possível processar o cadastro'
-    });
+      message: 'Não foi possível processar o cadastro',
+      debug: {
+        errorType: typeof error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
+      }
+    };
+    
+    console.log('📤 [CREATE_ACCOUNT] Enviando resposta de erro:', JSON.stringify(errorResponse, null, 2));
+    res.status(500).json(errorResponse);
   }
 };

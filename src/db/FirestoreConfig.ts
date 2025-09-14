@@ -39,6 +39,8 @@ class FirestoreConfig {
    */
   private initializeFirestore(): void {
     try {
+      console.log('🔧 [FIRESTORE_CONFIG] Iniciando inicialização do Firestore');
+      
       if (!this.initialized) {
         // Configuração do Firebase usando variáveis de ambiente
         const firebaseConfig = {
@@ -51,30 +53,51 @@ class FirestoreConfig {
           measurementId: process.env.FIREBASE_MEASUREMENT_ID
         };
 
+        console.log('🔍 [FIRESTORE_CONFIG] Variáveis de ambiente carregadas:', {
+          apiKey: firebaseConfig.apiKey ? 'definida' : 'não definida',
+          authDomain: firebaseConfig.authDomain ? 'definida' : 'não definida',
+          projectId: firebaseConfig.projectId ? 'definida' : 'não definida',
+          storageBucket: firebaseConfig.storageBucket ? 'definida' : 'não definida',
+          messagingSenderId: firebaseConfig.messagingSenderId ? 'definida' : 'não definida',
+          appId: firebaseConfig.appId ? 'definida' : 'não definida',
+          measurementId: firebaseConfig.measurementId ? 'definida' : 'não definida'
+        });
+
         // Validação das variáveis obrigatórias
         if (!firebaseConfig.projectId) {
+          console.error('💥 [FIRESTORE_CONFIG] FIREBASE_PROJECT_ID não está definido');
           throw new Error('FIREBASE_PROJECT_ID não está definido nas variáveis de ambiente');
         }
+
+        console.log('✅ [FIRESTORE_CONFIG] Variáveis obrigatórias validadas');
 
         // Para servidor Node.js, usamos o Firebase Admin SDK
         // Inicializa com as credenciais padrão do Google Cloud ou service account
         if (!admin.apps.length) {
+          console.log('🚀 [FIRESTORE_CONFIG] Inicializando Firebase Admin SDK...');
           admin.initializeApp({
             projectId: firebaseConfig.projectId,
             // Se houver service account key, pode ser adicionado aqui
             // credential: admin.credential.cert(serviceAccountKey)
           });
+          console.log('✅ [FIRESTORE_CONFIG] Firebase Admin SDK inicializado');
+        } else {
+          console.log('ℹ️ [FIRESTORE_CONFIG] Firebase Admin SDK já estava inicializado');
         }
 
         this.db = admin.firestore();
         this.initialized = true;
         
-        console.log('✅ Firestore inicializado com sucesso');
-        console.log(`📊 Projeto: ${firebaseConfig.projectId}`);
+        console.log('✅ [FIRESTORE_CONFIG] Firestore inicializado com sucesso');
+        console.log(`📊 [FIRESTORE_CONFIG] Projeto: ${firebaseConfig.projectId}`);
+      } else {
+        console.log('ℹ️ [FIRESTORE_CONFIG] Firestore já estava inicializado');
       }
     } catch (error) {
-      console.error('❌ Erro ao inicializar Firestore:', error);
-      throw new Error(`Falha na inicialização do Firestore: ${error}`);
+      console.error('💥 [FIRESTORE_CONFIG] ERRO ao inicializar Firestore:', error);
+      console.error('💥 [FIRESTORE_CONFIG] Stack trace:', error instanceof Error ? error.stack : 'N/A');
+      console.error('💥 [FIRESTORE_CONFIG] Tipo do erro:', typeof error);
+      throw new Error(`Falha na inicialização do Firestore: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
