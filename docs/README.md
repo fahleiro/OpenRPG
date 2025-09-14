@@ -1,5 +1,3 @@
-# openRPG Backend - Documentação
-
 ## Sobre
 O openRPG é um backend self-hosted e open source para RPGs, desenvolvido em TypeScript e construído como uma REST API. Este projeto foca em criar uma base sólida e escalável para jogos de RPG, começando com um sistema simples mas robusto de itens.
 
