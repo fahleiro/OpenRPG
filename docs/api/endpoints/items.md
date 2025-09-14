@@ -1,7 +1,3 @@
-# Endpoints - Itens
-
-Os endpoints de itens permitem gerenciar o inventário do jogo, incluindo armas, armaduras, consumíveis e itens diversos.
-
 ## 📦 GET /items
 
 Lista todos os itens disponíveis no sistema.

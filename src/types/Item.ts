@@ -15,10 +15,18 @@ export interface ItemRequirements {
   constitution?: number;
 }
 
+/**
+ * Tipos de itens disponíveis no sistema
+ * 1 = consumables (consumíveis)
+ * 2 = equipment (equipamentos)  
+ * 3 = miscellaneous (diversos)
+ */
+export type ItemTypeId = 1 | 2 | 3;
+
 export interface Item {
   id: number;
   name: string;
-  type: 'weapon' | 'armor' | 'consumable' | 'misc';
+  typeId: ItemTypeId;
   rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
   description: string;
   stats: ItemStats;

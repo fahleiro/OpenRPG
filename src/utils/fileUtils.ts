@@ -57,4 +57,46 @@ export class FileUtils {
       await fs.mkdir(this.ITEMS_DIR, { recursive: true });
     }
   }
+
+  /**
+   * Gera o próximo ID disponível para um novo item
+   */
+  static async getNextItemId(): Promise<number> {
+    try {
+      const items = await this.getAllItems();
+      if (items.length === 0) {
+        return 1;
+      }
+      
+      const maxId = Math.max(...items.map(item => item.id));
+      return maxId + 1;
+    } catch (error) {
+      console.error('Erro ao gerar próximo ID:', error);
+      throw new Error('Falha ao gerar ID para novo item');
+    }
+  }
+
+  /**
+   * Salva um item no banco de dados
+   */
+  static async saveItem(item: Item): Promise<void> {
+    try {
+      await this.ensureItemsDirectory();
+      
+      const filePath = path.join(this.ITEMS_DIR, `${item.id}.json`);
+      const itemData = JSON.stringify(item, null, 2);
+      
+      await fs.writeFile(filePath, itemData, 'utf-8');
+    } catch (error) {
+      console.error(`Erro ao salvar item ${item.id}:`, error);
+      throw new Error(`Falha ao salvar item ${item.id}`);
+    }
+  }
+
+  /**
+   * Valida se um typeId é válido conforme as regras de negócio
+   */
+  static isValidTypeId(typeId: number): typeId is 1 | 2 | 3 {
+    return typeId === 1 || typeId === 2 || typeId === 3;
+  }
 }
