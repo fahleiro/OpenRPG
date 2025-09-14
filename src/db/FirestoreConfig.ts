@@ -42,7 +42,6 @@ class FirestoreConfig {
       console.log('🔧 [FIRESTORE_CONFIG] Iniciando inicialização do Firestore');
       
       if (!this.initialized) {
-        // Configuração do Firebase usando variáveis de ambiente
         const firebaseConfig = {
           apiKey: process.env.FIREBASE_API_KEY,
           authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -52,51 +51,50 @@ class FirestoreConfig {
           appId: process.env.FIREBASE_APP_ID,
           measurementId: process.env.FIREBASE_MEASUREMENT_ID
         };
-
+  
         console.log('🔍 [FIRESTORE_CONFIG] Variáveis de ambiente carregadas:', {
-          apiKey: firebaseConfig.apiKey ? 'definida' : 'não definida',
-          authDomain: firebaseConfig.authDomain ? 'definida' : 'não definida',
           projectId: firebaseConfig.projectId ? 'definida' : 'não definida',
-          storageBucket: firebaseConfig.storageBucket ? 'definida' : 'não definida',
-          messagingSenderId: firebaseConfig.messagingSenderId ? 'definida' : 'não definida',
-          appId: firebaseConfig.appId ? 'definida' : 'não definida',
-          measurementId: firebaseConfig.measurementId ? 'definida' : 'não definida'
+          serviceAccountKey: process.env.FIREBASE_SERVICE_ACCOUNT_KEY ? 'definida' : 'não definida'
         });
-
-        // Validação das variáveis obrigatórias
+  
         if (!firebaseConfig.projectId) {
-          console.error('💥 [FIRESTORE_CONFIG] FIREBASE_PROJECT_ID não está definido');
-          throw new Error('FIREBASE_PROJECT_ID não está definido nas variáveis de ambiente');
+          throw new Error('FIREBASE_PROJECT_ID não está definido');
         }
-
-        console.log('✅ [FIRESTORE_CONFIG] Variáveis obrigatórias validadas');
-
-        // Para servidor Node.js, usamos o Firebase Admin SDK
-        // Inicializa com as credenciais padrão do Google Cloud ou service account
+  
         if (!admin.apps.length) {
           console.log('🚀 [FIRESTORE_CONFIG] Inicializando Firebase Admin SDK...');
-          admin.initializeApp({
-            projectId: firebaseConfig.projectId,
-            // Se houver service account key, pode ser adicionado aqui
-            // credential: admin.credential.cert(serviceAccountKey)
-          });
+          
+          const appConfig: any = {
+            projectId: firebaseConfig.projectId
+          };
+  
+          // Configuração com Service Account Key
+          if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+            console.log('🔑 [FIRESTORE_CONFIG] Usando Service Account Key');
+            try {
+              const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+              appConfig.credential = admin.credential.cert(serviceAccount);
+              console.log('✅ [FIRESTORE_CONFIG] Service Account configurada');
+            } catch (parseError) {
+              console.error('💥 [FIRESTORE_CONFIG] Erro ao parsear Service Account Key:', parseError);
+              throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY inválida');
+            }
+          } else {
+            console.log('⚠️ [FIRESTORE_CONFIG] Service Account Key não encontrada - usando credenciais padrão');
+          }
+  
+          admin.initializeApp(appConfig);
           console.log('✅ [FIRESTORE_CONFIG] Firebase Admin SDK inicializado');
-        } else {
-          console.log('ℹ️ [FIRESTORE_CONFIG] Firebase Admin SDK já estava inicializado');
         }
-
+  
         this.db = admin.firestore();
         this.initialized = true;
         
         console.log('✅ [FIRESTORE_CONFIG] Firestore inicializado com sucesso');
         console.log(`📊 [FIRESTORE_CONFIG] Projeto: ${firebaseConfig.projectId}`);
-      } else {
-        console.log('ℹ️ [FIRESTORE_CONFIG] Firestore já estava inicializado');
       }
     } catch (error) {
       console.error('💥 [FIRESTORE_CONFIG] ERRO ao inicializar Firestore:', error);
-      console.error('💥 [FIRESTORE_CONFIG] Stack trace:', error instanceof Error ? error.stack : 'N/A');
-      console.error('💥 [FIRESTORE_CONFIG] Tipo do erro:', typeof error);
       throw new Error(`Falha na inicialização do Firestore: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
