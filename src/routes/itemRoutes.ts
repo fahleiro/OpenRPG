@@ -1,12 +1,13 @@
 import { Router } from 'express';
-import { ItemController } from '../controllers/ItemController';
+import { getAllItems } from '../controllers/items/getAllItems';
+import { getItemById } from '../controllers/items/getItemById';
 
 const router = Router();
 
 // GET /items - Lista todos os itens
-router.get('/', ItemController.getAllItems);
+router.get('/', getAllItems);
 
 // GET /items/:id - Busca um item específico pelo ID
-router.get('/:id', ItemController.getItemById);
+router.get('/:id', getItemById);
 
 export default router;
