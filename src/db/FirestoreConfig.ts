@@ -41,8 +41,6 @@ class FirestoreConfig {
       const firebaseConfig = {
         projectId: process.env.FIREBASE_PROJECT_ID,
         storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-        // Para produção, use service account key
-        // Para desenvolvimento, pode usar Application Default Credentials
       };
 
       console.log('📋 [FIRESTORE_CONFIG] Configuração Firebase:', {
@@ -50,9 +48,21 @@ class FirestoreConfig {
         storageBucket: firebaseConfig.storageBucket
       });
 
+      // Prepara as credenciais do Service Account
+      let credential;
+      
+      if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+        console.log('🔑 [FIRESTORE_CONFIG] Usando Service Account Key do .env');
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+        credential = admin.credential.cert(serviceAccount);
+      } else {
+        console.log('🔑 [FIRESTORE_CONFIG] Tentando usar Application Default Credentials');
+        credential = admin.credential.applicationDefault();
+      }
+
       // Inicializa o Firebase Admin SDK
       admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
+        credential,
         ...firebaseConfig
       });
 
