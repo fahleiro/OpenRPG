@@ -39,8 +39,9 @@ class FirestoreConfig {
    */
   private initializeFirestore(): void {
     try {
+      console.log('🔧 [FIRESTORE_CONFIG] Iniciando inicialização do Firestore');
+      
       if (!this.initialized) {
-        // Configuração do Firebase usando variáveis de ambiente
         const firebaseConfig = {
           apiKey: process.env.FIREBASE_API_KEY,
           authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -50,31 +51,51 @@ class FirestoreConfig {
           appId: process.env.FIREBASE_APP_ID,
           measurementId: process.env.FIREBASE_MEASUREMENT_ID
         };
-
-        // Validação das variáveis obrigatórias
+  
+        console.log('🔍 [FIRESTORE_CONFIG] Variáveis de ambiente carregadas:', {
+          projectId: firebaseConfig.projectId ? 'definida' : 'não definida',
+          serviceAccountKey: process.env.FIREBASE_SERVICE_ACCOUNT_KEY ? 'definida' : 'não definida'
+        });
+  
         if (!firebaseConfig.projectId) {
-          throw new Error('FIREBASE_PROJECT_ID não está definido nas variáveis de ambiente');
+          throw new Error('FIREBASE_PROJECT_ID não está definido');
         }
-
-        // Para servidor Node.js, usamos o Firebase Admin SDK
-        // Inicializa com as credenciais padrão do Google Cloud ou service account
+  
         if (!admin.apps.length) {
-          admin.initializeApp({
-            projectId: firebaseConfig.projectId,
-            // Se houver service account key, pode ser adicionado aqui
-            // credential: admin.credential.cert(serviceAccountKey)
-          });
+          console.log('🚀 [FIRESTORE_CONFIG] Inicializando Firebase Admin SDK...');
+          
+          const appConfig: any = {
+            projectId: firebaseConfig.projectId
+          };
+  
+          // Configuração com Service Account Key
+          if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+            console.log('🔑 [FIRESTORE_CONFIG] Usando Service Account Key');
+            try {
+              const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+              appConfig.credential = admin.credential.cert(serviceAccount);
+              console.log('✅ [FIRESTORE_CONFIG] Service Account configurada');
+            } catch (parseError) {
+              console.error('💥 [FIRESTORE_CONFIG] Erro ao parsear Service Account Key:', parseError);
+              throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY inválida');
+            }
+          } else {
+            console.log('⚠️ [FIRESTORE_CONFIG] Service Account Key não encontrada - usando credenciais padrão');
+          }
+  
+          admin.initializeApp(appConfig);
+          console.log('✅ [FIRESTORE_CONFIG] Firebase Admin SDK inicializado');
         }
-
+  
         this.db = admin.firestore();
         this.initialized = true;
         
-        console.log('✅ Firestore inicializado com sucesso');
-        console.log(`📊 Projeto: ${firebaseConfig.projectId}`);
+        console.log('✅ [FIRESTORE_CONFIG] Firestore inicializado com sucesso');
+        console.log(`📊 [FIRESTORE_CONFIG] Projeto: ${firebaseConfig.projectId}`);
       }
     } catch (error) {
-      console.error('❌ Erro ao inicializar Firestore:', error);
-      throw new Error(`Falha na inicialização do Firestore: ${error}`);
+      console.error('�� [FIRESTORE_CONFIG] ERRO ao inicializar Firestore:', error);
+      throw new Error(`Falha na inicialização do Firestore: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
