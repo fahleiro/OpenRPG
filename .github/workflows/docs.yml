@@ -18,14 +18,16 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '16'
         cache: 'npm'
         
     - name: Install dependencies
       run: npm ci
       
     - name: Install GitBook CLI
-      run: npm install -g gitbook-cli
+      run: |
+        npm install -g gitbook-cli@2.3.2
+        gitbook fetch 3.2.3
       
     - name: Ensure docs directory exists
       run: |
