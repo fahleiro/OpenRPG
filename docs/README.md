@@ -7,13 +7,10 @@ OpenRPG is a self-hosted npm package, open-source backend for RPGs, developed in
 - **RESTful API** – Endpoints to expose server features
 - **JSON Database** – Simple database in JSON format
 - **Configurable CORS** – Controls which clients can access the API securely
+- **Firebase** – Used in the latest version to speed up development, providing account management and database integration
 
-## Core Server
-The server contains a simple configuration based on `.env`:
-- HOST: IP address where the server will run
-- PORT: PORT the server will use to listen for requests
-```
-# Run server configuration
-SERVER_HOST=localhost
-SERVER_PORT=3000
-```
+
+
+
+
+Ask ChatGPT
