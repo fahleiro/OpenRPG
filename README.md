@@ -296,3 +296,4 @@ Este é um projeto em desenvolvimento inicial. Contribuições são bem-vindas!
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
