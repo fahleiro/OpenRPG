@@ -1,4 +1,3 @@
-## About
 OpenRPG is a self-hosted npm package, open-source backend for RPGs, developed in TypeScript and built as a REST API
 
 ## Key Features
@@ -8,9 +7,3 @@ OpenRPG is a self-hosted npm package, open-source backend for RPGs, developed in
 - **JSON Database** – Simple database in JSON format
 - **Configurable CORS** – Controls which clients can access the API securely
 - **Firebase** – Used in the latest version to speed up development, providing account management and database integration
-
-
-
-
-
-Ask ChatGPT
