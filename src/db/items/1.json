@@ -1,0 +1,20 @@
+{
+  "id": 1,
+  "name": "Espada de Ferro",
+  "type": "weapon",
+  "rarity": "common",
+  "description": "Uma espada básica feita de ferro forjado. Confiável e durável para aventureiros iniciantes.",
+  "stats": {
+    "damage": 15,
+    "durability": 100,
+    "weight": 2.5
+  },
+  "requirements": {
+    "level": 1,
+    "strength": 10
+  },
+  "value": 50,
+  "stackable": false,
+  "createdAt": "2025-09-14T03:16:00.000Z",
+  "updatedAt": "2025-09-14T03:16:00.000Z"
+}
