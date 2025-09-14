@@ -43,7 +43,10 @@ jobs:
         if [ -d "graceful-fs" ]; then
           npm install graceful-fs@4.2.10 --no-save
         fi
+        echo "Fetching GitBook version 3.2.3..."
         gitbook fetch 3.2.3
+        echo "GitBook CLI installed successfully"
+        gitbook --version
       
     - name: Ensure docs directory exists
       run: |
@@ -57,17 +60,52 @@ jobs:
           echo "* [Introduction](README.md)" >> docs/SUMMARY.md
         fi
       
+    - name: Debug GitBook setup
+      run: |
+        echo "=== GitBook Debug Information ==="
+        echo "Current directory: $(pwd)"
+        echo "GitBook version:"
+        gitbook --version || echo "GitBook version command failed"
+        echo "Docs directory contents:"
+        ls -la docs/
+        echo "Checking docs/README.md:"
+        cat docs/README.md | head -5
+        echo "Checking docs/SUMMARY.md:"
+        cat docs/SUMMARY.md | head -5
+        
     - name: Install GitBook plugins
       run: |
         cd docs
+        echo "Installing GitBook plugins in docs directory..."
         gitbook install || echo "Plugin installation failed, continuing..."
+        echo "Plugins installation completed"
       
     - name: Build GitBook
       run: |
-        echo "Building GitBook..."
-        gitbook build docs _book
-        echo "Build completed. Checking output..."
-        ls -la _book/ || echo "No _book directory found"
+        echo "=== Building GitBook ==="
+        echo "Current directory: $(pwd)"
+        echo "Building from docs/ to _book/"
+        gitbook build docs _book --debug
+        echo "Build command completed. Checking results..."
+        
+        if [ -d "_book" ]; then
+          echo "✅ _book directory created successfully"
+          echo "Contents of _book:"
+          ls -la _book/
+        else
+          echo "❌ _book directory not found"
+          echo "Trying alternative build approach..."
+          cd docs
+          gitbook build . ../_book --debug
+          cd ..
+          if [ -d "_book" ]; then
+            echo "✅ Alternative build successful"
+            ls -la _book/
+          else
+            echo "❌ Alternative build also failed"
+            exit 1
+          fi
+        fi
         
     - name: Verify build output
       run: |
