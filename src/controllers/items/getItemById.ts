@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { DbFileUtils } from '../../db/utils/DbFileUtils';
+import { firestoreConfig } from '../../db/FirestoreConfig';
 
 /**
  * Controller para buscar um item específico pelo ID
  * Endpoint: GET /items/:id
  * 
  * @description Este controller é responsável por recuperar um item específico
- * baseado no ID fornecido como parâmetro da rota. Inclui validação do ID
- * e tratamento de casos onde o item não é encontrado.
+ * baseado no ID fornecido como parâmetro da rota através do Firestore Database.
+ * Inclui validação do ID e tratamento de casos onde o item não é encontrado.
  * 
  * @param req - Objeto Request do Express (contém req.params.id)
  * @param res - Objeto Response do Express
@@ -15,11 +15,16 @@ import { DbFileUtils } from '../../db/utils/DbFileUtils';
  */
 export const getItemById = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('🔍 [GET_ITEM_BY_ID] Iniciando busca de item por ID...');
+    
     // Extrai e converte o ID do parâmetro da rota
     const id = parseInt(req.params.id || '0');
     
+    console.log(`🔍 [GET_ITEM_BY_ID] ID solicitado: ${id}`);
+    
     // Validação do ID fornecido
     if (isNaN(id) || id <= 0) {
+      console.log('❌ [GET_ITEM_BY_ID] ID inválido:', req.params.id);
       res.status(400).json({
         success: false,
         error: 'ID inválido',
@@ -28,11 +33,18 @@ export const getItemById = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Busca o item pelo ID através do DbFileUtils
-    const item = await DbFileUtils.getItemById(id);
+    // Obtém instância do Firestore
+    const db = firestoreConfig.getDatabase();
     
-    // Verifica se o item foi encontrado
-    if (!item) {
+    // Busca o item pelo ID na coleção 'items'
+    const snapshot = await db
+      .collection('items')
+      .where('id', '==', id)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      console.log(`❌ [GET_ITEM_BY_ID] Item com ID ${id} não encontrado`);
       res.status(404).json({
         success: false,
         error: 'Item não encontrado',
@@ -41,6 +53,19 @@ export const getItemById = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
+    // Processa o documento encontrado
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+    
+    const item = {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      typeId: data.typeId
+    };
+
+    console.log(`✅ [GET_ITEM_BY_ID] Item encontrado: ${item.name}`);
+    
     // Retorna o item encontrado
     res.status(200).json({
       success: true,
@@ -49,7 +74,8 @@ export const getItemById = async (req: Request, res: Response): Promise<void> =>
     });
   } catch (error) {
     // Log do erro para debugging
-    console.error('Erro no getItemById:', error);
+    console.error('💥 [GET_ITEM_BY_ID] ERRO:', error);
+    console.error('💥 [GET_ITEM_BY_ID] Stack trace:', error instanceof Error ? error.stack : 'N/A');
     
     // Retorna resposta de erro padronizada
     res.status(500).json({

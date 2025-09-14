@@ -5,8 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc && npm run copy:db",
-    "copy:db": "xcopy \"src\\db\\items\" \"dist\\db\\items\" /E /I /Y 2>nul || (echo Database files copied || ver>nul)",
+    "build": "tsc",
     "start": "node dist/index.js",
     "clean": "rimraf dist",
     "docs:install": "npm install -g gitbook-cli",
