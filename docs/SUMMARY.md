@@ -1,7 +1,6 @@
-## Introduction
-* [README](README.md)
-* [Config](CONFIG.md)
-* [Database](DATABASE.md)
+# Summary
 
-## Features
+* [Introduction](README.md)
+* [Configuration](CONFIG.md)
+* [Database](features/DATABASE.md)
 * [Items](features/ITEMS.md)

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { firestoreConfig } from '../../db/FirestoreConfig';
+import { localDatabaseService } from '../../db/LocalDatabaseService';
 
 /**
  * Controller para listar todos os itens disponíveis
  * Endpoint: GET /items
  * 
  * @description Este controller é responsável por recuperar todos os itens
- * do sistema através do Firestore Database e retornar uma resposta padronizada
+ * do sistema através do banco de dados local JSON e retornar uma resposta padronizada
  * com os dados, contagem e mensagem de sucesso.
  * 
  * @param req - Objeto Request do Express
@@ -17,13 +17,10 @@ export const getAllItems = async (req: Request, res: Response): Promise<void> =>
   try {
     console.log('🔍 [GET_ALL_ITEMS] Iniciando busca de todos os itens...');
     
-    // Obtém instância do Firestore
-    const db = firestoreConfig.getDatabase();
+    // Busca todos os itens no banco de dados local
+    const items = await localDatabaseService.getAllItems();
     
-    // Busca todos os itens na coleção 'items'
-    const snapshot = await db.collection('items').get();
-    
-    if (snapshot.empty) {
+    if (items.length === 0) {
       console.log('📭 [GET_ALL_ITEMS] Nenhum item encontrado');
       res.status(200).json({
         success: true,
@@ -34,27 +31,21 @@ export const getAllItems = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Processa os documentos encontrados
-    const items = snapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: data.id,
-        name: data.name,
-        description: data.description,
-        typeId: data.typeId
-      };
-    });
-
-    // Ordena por ID para manter consistência
-    items.sort((a, b) => a.id - b.id);
+    // Mapeia os itens para o formato de resposta
+    const formattedItems = items.map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      typeId: item.type
+    }));
     
-    console.log(`✅ [GET_ALL_ITEMS] ${items.length} itens encontrados`);
+    console.log(`✅ [GET_ALL_ITEMS] ${formattedItems.length} itens encontrados`);
     
     // Retorna resposta de sucesso com os dados
     res.status(200).json({
       success: true,
-      data: items,
-      count: items.length,
+      data: formattedItems,
+      count: formattedItems.length,
       message: 'Itens carregados com sucesso'
     });
   } catch (error) {

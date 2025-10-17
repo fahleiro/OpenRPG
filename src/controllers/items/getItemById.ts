@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { firestoreConfig } from '../../db/FirestoreConfig';
+import { localDatabaseService } from '../../db/LocalDatabaseService';
 
 /**
  * Controller para buscar um item específico pelo ID
  * Endpoint: GET /items/:id
  * 
  * @description Este controller é responsável por recuperar um item específico
- * baseado no ID fornecido como parâmetro da rota através do Firestore Database.
+ * baseado no ID fornecido como parâmetro da rota através do banco de dados local JSON.
  * Inclui validação do ID e tratamento de casos onde o item não é encontrado.
  * 
  * @param req - Objeto Request do Express (contém req.params.id)
@@ -33,17 +33,10 @@ export const getItemById = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Obtém instância do Firestore
-    const db = firestoreConfig.getDatabase();
-    
-    // Busca o item pelo ID na coleção 'items'
-    const snapshot = await db
-      .collection('items')
-      .where('id', '==', id)
-      .limit(1)
-      .get();
+    // Busca o item pelo ID no banco de dados local
+    const item = await localDatabaseService.getItemById(id);
 
-    if (snapshot.empty) {
+    if (!item) {
       console.log(`❌ [GET_ITEM_BY_ID] Item com ID ${id} não encontrado`);
       res.status(404).json({
         success: false,
@@ -53,32 +46,20 @@ export const getItemById = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Processa o documento encontrado
-    const doc = snapshot.docs[0];
-    if (!doc) {
-      console.log(`❌ [GET_ITEM_BY_ID] Documento não encontrado para ID ${id}`);
-      res.status(404).json({
-        success: false,
-        error: 'Item não encontrado',
-        message: `Item com ID ${id} não existe`
-      });
-      return;
-    }
-    const data = doc.data();
-    
-    const item = {
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      typeId: data.typeId
+    // Formata o item para o formato de resposta
+    const formattedItem = {
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      typeId: item.type
     };
 
-    console.log(`✅ [GET_ITEM_BY_ID] Item encontrado: ${item.name}`);
+    console.log(`✅ [GET_ITEM_BY_ID] Item encontrado: ${formattedItem.name}`);
     
     // Retorna o item encontrado
     res.status(200).json({
       success: true,
-      data: item,
+      data: formattedItem,
       message: 'Item encontrado com sucesso'
     });
   } catch (error) {
