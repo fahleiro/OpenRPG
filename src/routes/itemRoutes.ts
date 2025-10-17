@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getAllItems } from '../controllers/items/getAllItems';
-import { getItemById } from '../controllers/items/getItemById';
+import { getAllItems } from '../controllers/item/getAllItems';
+import { getItemById } from '../controllers/item/getItemById';
 
 const router = Router();
 

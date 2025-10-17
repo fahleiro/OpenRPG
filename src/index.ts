@@ -111,12 +111,11 @@ app.use((error: Error, req: express.Request, res: express.Response, next: expres
 function startServer(): void {
   app.listen(PORT, () => {
     console.log('=================================');
-    console.log('🎲 OpenRPG Core Server');
+    console.log('OpenRPG Core Server');
     console.log('=================================');
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
-    console.log(`🌐 URL: http://localhost:${PORT}`);
-    console.log(`📚 Health Check: http://localhost:${PORT}/health`);
-    console.log(`📦 Items API: http://localhost:${PORT}/api/items`);
+    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`URL: http://localhost:${PORT}`);
+    console.log(`Health Check: http://localhost:${PORT}/health`);
     console.log('=================================');
   });
 }
